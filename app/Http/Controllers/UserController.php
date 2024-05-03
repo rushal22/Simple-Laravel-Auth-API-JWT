@@ -18,7 +18,11 @@ class UserController extends Controller
             'email'=>'required|email|unique:users',
             'password'=>'required|min:8'
         ]);
-        if($validator){
+        if($validator->fails()){
+            
+            return response()->json(['message'=>'error occurred', 'error'=> $validator->errors()], 400);
+        }
+        else{
             $user = new User;
             $user->firstName = $data['firstName'];
             $user->lastName = $data['lastName'];
@@ -26,9 +30,6 @@ class UserController extends Controller
             $user->password = Hash::make($data['password']);
             $user->save();
             return response()->json(['message'=>'successfull', 'data'=>$user], 200);
-        }
-        else{
-            return response()->json(['message'=>'error occurred', 'error'=> $validator->errors()], 400);
         }
     }
 
