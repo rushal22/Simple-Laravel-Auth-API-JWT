@@ -13,13 +13,15 @@ class UserController extends Controller
     public function register(Request $request){
         $data = $request->all();
         $validator = Validator::make($request->all(),[
-            'name'=>'required|max:50',
+            'firstName'=>'required|max:50',
+            'lastName'=>'required|max:50',
             'email'=>'required|email|unique:users',
-            'password'=>'required|min:8|confirmed'
+            'password'=>'required|min:8'
         ]);
         if($validator){
             $user = new User;
-            $user->name = $data['name'];
+            $user->firstName = $data['firstName'];
+            $user->lastName = $data['lastName'];
             $user->email = $data['email'];
             $user->password = Hash::make($data['password']);
             $user->save();
