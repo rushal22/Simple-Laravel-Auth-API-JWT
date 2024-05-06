@@ -6,9 +6,12 @@ import Navbar from "./Navbar";
 const NavbarContainer = () => {
   const dispatch = useDispatch();
   const loggedIn = useSelector((state) => state.changeUserDetails.loggedIn);
+  const firstName = useSelector((state) => state.changeUserDetails.firstName)
     console.log(loggedIn);
+
+
   const handleLogOut = () => {
-    dispatch(logOutUser());
+    dispatch(logOutUser()); 
   };
 
 
@@ -16,6 +19,7 @@ const NavbarContainer = () => {
     <Navbar
       loggedIn={loggedIn}
       onLogout={handleLogOut}
+      firstName={firstName}
     />
   );
 };

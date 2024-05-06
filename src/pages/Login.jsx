@@ -9,7 +9,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useDispatch , useSelector  } from "react-redux";
-import { loginUser } from "../reactredux/actions";
+import { loginUser , logInPending } from "../reactredux/actions";
 import { useState } from "react";
 import userJsonData from "../testData.json";
 
@@ -44,6 +44,7 @@ const processing = useSelector((state) => state.logInMessage.processing);
     if(email === userJsonData.user.email && password === userJsonData.user.password){
       console.log(userData);
       dispatch(loginUser())
+      dispatch(logInPending())
       navigate('/')
     }else{
       console.log("error occurred");

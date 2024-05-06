@@ -1,6 +1,6 @@
 import userData from "../../testData.json";
 // import axios from "axios";
-import { LOGIN_PENDING , LOGIN_ERROR } from "../reducers/user";
+// import { LOGIN_PENDING , LOGIN_ERROR } from "../reducers/user";
 // import { LOGIN , LOGOUT } from "../reducers/userDetail";
 
 export const logIn = (data) => {
@@ -20,23 +20,22 @@ export const logOut = () => {
 
 export const logInError = (error) => {
   return {
-    type: LOGIN_ERROR,
+    type: "LOGIN_ERROR",
     payload: error,
   };
 };
 export const logInPending = () => {
   return {
-    type: LOGIN_PENDING,
+    type: "LOGIN_PENDING",
   };
 };
-export const loginUser = (data) => {
+export const loginUser = () => {
   
   return (dispatch) => {
     try {
       // axios.get(`https://jsonplaceholder.typicode.com/todos/1`).then(res => {dispatch(logInSuccess(res))})
       dispatch(logInPending());
-      
-      dispatch(logIn(userData));
+      dispatch(logIn(userData.user));
 
     } catch (error) {
       console.log(error);

@@ -60,7 +60,7 @@ const Registration = () => {
                 <TextField
                   required
                   fullWidth
-                 
+  
                   onChange={handleChange}
                   id="lastName"
                   label="Last Name"

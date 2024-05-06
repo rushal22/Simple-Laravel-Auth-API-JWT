@@ -1,13 +1,11 @@
 // export const LOGIN = "LOGIN";
 // export const LOGOUT = "LOGOUT"
 const initialState = {
-    data: {
         firstName : '',
         lastName : '',
         email : '',
         password : '',
         loggedIn : false
-    }
 }   
 
 const changeUserDetails = (state = initialState , action) => {
