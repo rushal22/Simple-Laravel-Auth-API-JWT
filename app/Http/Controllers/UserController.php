@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends Controller
 {
@@ -95,14 +97,16 @@ class UserController extends Controller
     }
 
     public function logout(){
-        $log = Auth::guard('api')->logout();
-
-        if($log){
+        try {
+            // Invalidate the token by adding it to the blacklist
+            JWTAuth::parseToken()->invalidate();
             
-            return response()->json(['message'=>'logged out successfully'], 200);
-        }
-        else{
-            return response()->json(['message'=>'failed'], 400);
+            // Optionally, clear the token from the client-side storage (e.g., browser localStorage)
+            // This step is recommended for better user experience
+            return response()->json(['message' => 'Successfully logged out']);
+        } catch (JWTException $e) {
+            // Something went wrong while invalidating the token
+            return response()->json(['message' => 'Failed to logout', 'error'=>$e], 500);
         }
     }
 }
