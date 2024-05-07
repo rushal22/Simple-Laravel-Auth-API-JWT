@@ -34,7 +34,8 @@ class UserController extends Controller
     }
 
     public function login(Request $request){
-        $data = $request->all();
+        // $data = $request->all();
+        $data = $request->only('email', 'password');
 
         $validator = Validator::make($request->all(),[
             'email'=>'required',
@@ -46,14 +47,14 @@ class UserController extends Controller
         }
         else{
             if(Auth::attempt($data)){
-                $loginEmail = [
-                        'email'=>$data['email'],
-                        'password'=>$data['password']
-                    ];
-                $token = Auth::attempt($loginEmail);
+                // $loginEmail = [
+                //         'email'=>$data['email'],
+                //         'password'=>$data['password']
+                //     ];
+                $token = Auth::attempt($data);
                 
-                $response = $this->respondWithToken($token);
-                return response()->json(['message'=>'successfull', 'token'=>$response],200);
+                // $response = $this->respondWithToken($token);
+                return response()->json(['message'=>'successfull', 'token'=>$token],200);
             }
             else{
                 return response()->json(['message'=>'invalid credentials'], 400);
@@ -81,13 +82,13 @@ class UserController extends Controller
         }
     }
 
-    public function respondWithToken($token){
-        return response()->json([
-            'message'=>'logged in successfully', 
-            'token_type'=>'Bearer', 
-            'access_token'=>$token
-        ]);
-    }
+    // public function respondWithToken($token){
+    //     return response()->json([
+    //         'message'=>'logged in successfully', 
+    //         'token_type'=>'Bearer', 
+    //         'access_token'=>$token
+    //     ]);
+    // }
 
     public function profile(Request $request){
         return response()->json(auth()->user());
