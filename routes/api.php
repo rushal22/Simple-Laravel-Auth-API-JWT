@@ -15,8 +15,14 @@ Route::group(['middleware'=>'api'], function($routes){
 
     Route::post('login', [UserController::class, 'login']);
 
-    Route::get('profile', [UserController::class, 'profile']);
+    Route::middleware('authenticate:api')->group(function(){
 
-    Route::post('logout', [UserController::class, 'logout']);
+        Route::post('refresh', [UserController::class, 'refreshToken']);
+
+        Route::get('profile', [UserController::class, 'profile']);
+    
+        Route::post('logout', [UserController::class, 'logout']);
+    
+    });
 
 });

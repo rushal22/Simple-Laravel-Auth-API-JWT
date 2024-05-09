@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class UserController extends Controller
 {
@@ -48,52 +49,24 @@ class UserController extends Controller
             return response()->json(['message'=>'error occurred'],400);
         }
         else{
-            if(Auth::attempt($data)){
+            if(JWTAuth::attempt($data)){
                 // $loginEmail = [
                 //         'email'=>$data['email'],
                 //         'password'=>$data['password']
                 //     ];
-                $token = Auth::attempt($data);
+                $token = JWTAuth::attempt($data);
                 
                 // $response = $this->respondWithToken($token);
-                return response()->json(['message'=>'successfull', 'token'=>$token],200);
+                return response()->json(['message'=>'successfull', 'access_token'=>$token, 'token_type'=>'Bearer', 'user_data'=>auth()->user()],200);
             }
             else{
                 return response()->json(['message'=>'invalid credentials'], 400);
             }
-            // $loginEmail = [
-                //     'email'=>$data['email'],
-                //     'password'=>$data['password']
-                // ];
-
-            // $loggedin = false;
-            // $token = '';
-            // if($log2 = Auth::attempt($loginEmail)){
-            //     $loggedin = true;
-            //     $token = $log2;
-            // }
-
-            // if($loggedin == false){
-            //     return response()->json(['message'=>'invalid'], 400);
-            // }
-
-            // $response = $this->respondWithToken($token);
-            // return response()->json(['token'=>$response],200);
-
-            
         }
     }
 
-    // public function respondWithToken($token){
-    //     return response()->json([
-    //         'message'=>'logged in successfully', 
-    //         'token_type'=>'Bearer', 
-    //         'access_token'=>$token
-    //     ]);
-    // }
-
     public function profile(Request $request){
-        return response()->json(auth()->user());
+        return response()->json(auth()->user(), 200);
     }
 
     public function logout(){
@@ -107,6 +80,20 @@ class UserController extends Controller
         } catch (JWTException $e) {
             // Something went wrong while invalidating the token
             return response()->json(['message' => 'Failed to logout', 'error'=>$e], 500);
+        }
+    }
+
+    public function refreshToken(Request $request){
+        $token = JWTAuth::getToken();
+
+        if($token){
+            try{
+                $newToken = JWTAuth::refresh($token);
+                return response()->json(['access_token'=>$newToken, 'token_type'=>'Bearer'], 201);
+            }
+            catch(TokenInvalidException $e){
+                return response()->json(['error'=>$e], 401);
+            }
         }
     }
 }
