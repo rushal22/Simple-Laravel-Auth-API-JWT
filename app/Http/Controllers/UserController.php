@@ -32,7 +32,7 @@ class UserController extends Controller
             $user->email = $data['email'];
             $user->password = Hash::make($data['password']);
             $user->save();
-            return response()->json(['message'=>'successfull', 'data'=>$user], 200);
+            return response()->json(['message'=>'User Registered!', 'data'=>$user], 200);
         }
     }
 
@@ -46,21 +46,15 @@ class UserController extends Controller
         ]);
         
         if($validator->fails()){
-            return response()->json(['message'=>'error occurred'],400);
+            return response()->json(['message'=>'error occurred', 'error'=>$validator->errors()],400);
         }
         else{
             if(JWTAuth::attempt($data)){
-                // $loginEmail = [
-                //         'email'=>$data['email'],
-                //         'password'=>$data['password']
-                //     ];
                 $token = JWTAuth::attempt($data);
-                
-                // $response = $this->respondWithToken($token);
-                return response()->json(['message'=>'successfull', 'access_token'=>$token, 'token_type'=>'Bearer', 'user_data'=>auth()->user()],200);
+                return response()->json(['message'=>'Login Successfull', 'access_token'=>$token, 'token_type'=>'Bearer', 'user_data'=>auth()->user()],200);
             }
             else{
-                return response()->json(['message'=>'invalid credentials'], 400);
+                return response()->json(['message'=>'Invalid email or password'], 400);
             }
         }
     }
@@ -83,7 +77,7 @@ class UserController extends Controller
         }
     }
 
-    public function refreshToken(Request $request){
+    public function refreshToken(){
         $token = JWTAuth::getToken();
 
         if($token){
