@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\PasswordReset;
+use App\Mail\ResetPasswordMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -89,5 +95,65 @@ class UserController extends Controller
                 return response()->json(['error'=>$e], 401);
             }
         }
+    }
+
+    public function forgetPassword(Request $request){
+        try{
+            $validator = Validator::make($request->all(),[
+                'email'=> 'required|email|exists:users,email'
+            ]);
+            if($validator->fails()){
+                return response()->json(['message'=>$validator->errors()], 401);
+            }
+
+            $token = Str::random(50);
+            $domain = URL::to('/');
+            $url = $domain.'/resetPassword?'.$token;
+            $datetime = Carbon::now();
+            
+            Mail::to($request->email)->send(new ResetPasswordMail($url));
+
+            PasswordReset::updateOrCreate(
+                ['email' => $request->email],
+                [
+                    'email' => $request->email,
+                    'token' => $token,
+                    'created_at' => $datetime
+                ]
+            );
+
+            return response()->json(['message'=>'Password reset link send successfully.'], 200);
+        
+        }catch(\Exception $e){
+            return response()->json(['message'=>'error occurred', 'error'=>$e->getMessage()], 402);
+        }
+    }
+
+    public function resetPassword(Request $request){
+        $validator = Validator::make($request->all(),[
+            'token' => 'required',
+            'password' => 'required|min:8|confirmed'
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['message'=>$validator->errors()], 401);
+        }
+
+        $reset = PasswordReset::where('email',$request->email)
+                            ->where('token', $request->token)
+                            ->first();
+        if(!$reset){
+            return response()->json(['message'=>'invalid token'], 401);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        $reset->delete();
+
+        return response()->json(['message'=>'Password Reset Successful!'], 200);
+
+
     }
 }

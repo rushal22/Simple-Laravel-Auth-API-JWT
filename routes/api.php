@@ -9,6 +9,9 @@ use App\Http\Controllers\UserController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
+Route::post('password/forget', [UserController::class, 'forgetPassword']);
+Route::post('password/reset', [UserController::class, 'resetPassword']);
+
 Route::group(['middleware'=>'api'], function($routes){
     
     Route::post('register', [UserController::class, 'register']);
