@@ -22,8 +22,9 @@ Route::group(['middleware'=>'api'], function($routes){
 
     Route::middleware('authenticate:api')->group(function(){
 
-
         Route::get('profile', [UserController::class, 'profile']);
+
+        Route::post('editprofile', [UserController::class, 'editprofile']);
     
         Route::post('logout', [UserController::class, 'logout']);
     

@@ -156,4 +156,31 @@ class UserController extends Controller
 
 
     }
+
+    public function editprofile(Request $request){
+        $data = $request->all();
+        $validator = Validator::make($request->all(), [
+            'firstName'=>'sometimes|max:20',
+            'lastName'=>'sometimes|max:20'
+        ]);
+
+        if($validator->fails()){
+            return response()->json(['message'=>$validator->errors()], 400);
+        }
+
+        try{
+            $user = $request->user();
+            if(isset($data['firstName'])){
+                $user->firstName = $data['firstName'];
+            }
+            if(isset($data['lastName'])){
+                $user->lastName = $data['lastName'];
+            }
+            $user->save();
+            return response()->json(['message'=>'Profile updated!', 'data'=>auth()->user()], 200);
+        }catch(\Exception $e){
+            return response()->json(['message'=>$e->getMessage()], 401);
+        }
+
+    }
 }
