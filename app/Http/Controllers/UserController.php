@@ -107,8 +107,8 @@ class UserController extends Controller
             }
 
             $token = Str::random(50);
-            $domain = URL::to('/');
-            $url = $domain.'/resetPassword?'.$token;
+            $domain = URL::to('http://localhost:3000');
+            $url = $domain.'/resetpassword/'.$token;
             $datetime = Carbon::now();
             
             Mail::to($request->email)->send(new ResetPasswordMail($url));

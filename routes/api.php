@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 // })->middleware('auth:sanctum');
 
 Route::post('password/forget', [UserController::class, 'forgetPassword']);
-Route::post('password/reset', [UserController::class, 'resetPassword']);
+Route::post('resetpassword/{token}', [UserController::class, 'resetPassword']);
 
 Route::group(['middleware'=>'api'], function($routes){
     
