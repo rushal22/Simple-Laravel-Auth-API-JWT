@@ -131,26 +131,26 @@ class UserController extends Controller
 
     public function resetPassword(Request $request){
         $validator = Validator::make($request->all(),[
-            'token' => 'required',
+            // 'token' => 'required',
             'password' => 'required|min:8|confirmed'
         ]);
 
         if($validator->fails()){
             return response()->json(['message'=>$validator->errors()], 401);
         }
-
-        $reset = PasswordReset::where('email',$request->email)
-                            ->where('token', $request->token)
+                                // where('email',$request->email)
+        $reset = PasswordReset::where('token', $request->token)
                             ->first();
+        $email = $reset->email;
         if(!$reset){
             return response()->json(['message'=>'invalid token'], 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $email)->first();
         $user->password = Hash::make($request->password);
         $user->save();
 
-        $reset->delete();
+        // $reset->delete();
 
         return response()->json(['message'=>'Password Reset Successful!'], 200);
 
