@@ -125,7 +125,7 @@ class UserController extends Controller
             return response()->json(['message'=>'Password reset link send successfully.'], 200);
         
         }catch(\Exception $e){
-            return response()->json(['message'=>'error occurred', 'error'=>$e->getMessage()], 402);
+            return response()->json(['message'=>'Link has been sent to your email!', 'error'=>$e->getMessage()], 402);
         }
     }
 
@@ -151,6 +151,7 @@ class UserController extends Controller
         $user->save();
 
         // $reset->delete();
+        PasswordReset::where('email', $email)->delete();
 
         return response()->json(['message'=>'Password Reset Successful!'], 200);
 
