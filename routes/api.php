@@ -1,9 +1,8 @@
 <?php
 
-use GuzzleHttp\Middleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -31,3 +30,5 @@ Route::group(['middleware'=>'api'], function($routes){
     });
 
 });
+
+Route::apiResource('\product',ProductController::class);
