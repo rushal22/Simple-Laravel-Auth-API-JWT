@@ -31,4 +31,4 @@ Route::group(['middleware'=>'api'], function($routes){
 
 });
 
-Route::apiResource('\product',ProductController::class);
+Route::apiResource('product',ProductController::class);

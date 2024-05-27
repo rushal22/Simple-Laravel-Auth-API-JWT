@@ -33,28 +33,26 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         try{
-
+            
+            $products = new Product();
+            $products->title = $request->title;
+            $products->price = $request->price;
+            $products->description = $request->description;
+            $products->discountpercentage = $request->discountpercentage;
+            $products->rating = $request->rating;
+            $products->quantity = $request->quantity;
+            $products->brand = $request->brand;
+            $products->category = $request->category;
             if($request->hasFile('image')){
-
-                $imagepath = $request->file('image')->store('products');
-
+                
+                $imagepath = $request->file('image')->store('public');
                 $imageURL = Storage::url($imagepath);
-
-                $products = new Product();
-                $products->title = $request->title;
-                $products->price = $request->price;
-                $products->description = $request->description;
-                $products->discountpercentage = $request->discountpercentage;
-                $products->rating = $request->rating;
-                $products->quantity = $request->quantity;
-                $products->brand = $request->brand;
-                $products->category = $request->category;
                 $products->image = $imageURL;
+            }
                 $products->save();
 
                 return response()->json(['message'=>'Product added successfully!'], 201);
 
-            }
         }catch(\Exception $e){
             return response()->json(['message'=>'error occured', 'errors'=>$e->getMessage()], 400);
         }
