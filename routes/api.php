@@ -32,3 +32,4 @@ Route::group(['middleware'=>'api'], function($routes){
 });
 
 Route::apiResource('product',ProductController::class);
+Route::get('search', [ProductController::class, 'search']);

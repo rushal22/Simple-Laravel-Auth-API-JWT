@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProductRequest;
+use App\Http\Requests\UpdateRequest;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -82,27 +83,15 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductRequest $request, string $id)
+    public function update(UpdateRequest $request, string $id)
     {
         try{
             $product = Product::findorFail($id);
-            $product->title = $request->title;
             $product->price = $request->price;
-            $product->description = $request->description;
             $product->discountpercentage = $request->discountpercentage;
             $product->rating = $request->rating;
             $product->quantity = $request->quantity;
-            $product->brand = $request->brand;
-            $product->category = $request->category;
-            if($request->hasFile('image')){
-                
-                $imagepath = $request->file('image')->store('products');
-                
-                $imageURL = Storage::url($imagepath);
-                
-                $product->image = $imageURL;
-            }
-                $product->save();
+            $product->save();
 
                 return response()->json(['message'=>'Product updated successfully!'], 201);
         } catch (ModelNotFoundException $e) {
@@ -122,7 +111,7 @@ class ProductController extends Controller
             
             if ($product->image) {
                 $imagePath = basename($product->image);
-                Storage::delete('products/' . $imagePath);
+                Storage::delete('public/' . $imagePath);
             }
 
             $product->delete();
@@ -130,6 +119,20 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product deleted successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to delete product', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function search(Request $request){
+        $keyword = $request->keyword;
+
+        $products = Product::where('title', 'LIKE', '%' . $keyword . '%')
+                            ->orWhere('category', 'LIKE', '%' . $keyword . '%')
+                            ->get();
+        if($products->isNotEmpty()){
+            return response()->json(['products'=>$products], 200);
+        }
+        else{
+            return response()->json(['message'=>'Nothing Found!!!'], 404);
         }
     }
 }
