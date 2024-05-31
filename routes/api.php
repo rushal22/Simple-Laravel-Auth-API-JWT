@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 
@@ -11,21 +12,21 @@ use App\Http\Controllers\ProductController;
 Route::post('password/forget', [UserController::class, 'forgetPassword']);
 Route::post('resetpassword/{token}', [UserController::class, 'resetPassword']);
 
-Route::group(['middleware'=>'api'], function($routes){
+Route::group(['middleware'=>'api'], function(){
     
     Route::post('register', [UserController::class, 'register']);
-
     Route::post('login', [UserController::class, 'login']);
-    
     Route::post('refresh', [UserController::class, 'refreshToken']);
 
     Route::middleware('authenticate:api')->group(function(){
 
         Route::get('profile', [UserController::class, 'profile']);
-
         Route::post('editprofile', [UserController::class, 'editprofile']);
-    
         Route::post('logout', [UserController::class, 'logout']);
+
+        Route::post('cart/add', [CartController::class, 'addToCart']);
+        Route::post('cart/remove', [CartController::class, 'removeFromCart']);
+        Route::get('cart', [CartController::class, 'viewCart']);
     
     });
 
