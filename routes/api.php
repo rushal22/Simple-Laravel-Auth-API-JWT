@@ -25,8 +25,10 @@ Route::group(['middleware'=>'api'], function(){
         Route::post('logout', [UserController::class, 'logout']);
 
         Route::post('cart/add', [CartController::class, 'addToCart']);
+        Route::put('cart/updateCart', [CartController::class, 'update']);
         Route::post('cart/remove', [CartController::class, 'removeFromCart']);
         Route::get('cart', [CartController::class, 'viewCart']);
+        Route::get('cart/getTotal', [CartController::class, 'getTotal']);
     
     });
 

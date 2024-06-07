@@ -36,6 +36,37 @@ class CartController extends Controller
         return response()->json(['message' => 'Product added to cart!'], 200);
     }
 
+    public function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['message' => 'error occurred!!', 'error' => $validator->errors()], 400);
+        }
+
+        $user = $request->user();
+        $cart = $user->cart;
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found!'], 404);
+        }
+
+        $productId = $request->input('product_id');
+        $quantity = $request->input('quantity');
+
+        $cartProduct = $cart->products()->where('product_id', $productId)->first();
+
+        if ($cartProduct) {
+            $cartProduct->pivot->quantity = $quantity;
+            $cartProduct->pivot->save();
+            return response()->json(['message' => 'Product quantity updated!'], 200);
+        } else {
+            return response()->json(['message' => 'Product not found in cart!'], 404);
+        }
+    }
+
     public function removeFromCart(Request $request)
     {
         $request->validate([
@@ -59,5 +90,28 @@ class CartController extends Controller
         $cart = $user->cart;
 
         return response()->json(['cart' => $cart ? $cart->load('products') : null], 200);
+    }
+
+    public function getTotal(Request $request)
+    {
+        $user = $request->user();
+        $cart = $user->cart; // Assuming there's a one-to-one relationship between User and Cart
+
+        if (!$cart) {
+            return response()->json(['message' => 'Cart not found!'], 404);
+        }
+
+        // Debugging: Check if the cart and products are being accessed correctly
+        if ($cart->products->isEmpty()) {
+            return response()->json(['message' => 'No products found in cart!'], 404);
+        }
+
+        $totalPrice = 0;
+
+        foreach ($cart->products as $product) {
+            $totalPrice += $product->price * $product->pivot->quantity;
+        }
+
+        return response()->json(['total_price' => $totalPrice], 200);
     }
 }
