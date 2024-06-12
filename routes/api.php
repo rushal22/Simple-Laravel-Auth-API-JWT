@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -28,7 +29,7 @@ Route::group(['middleware'=>'api'], function(){
         Route::put('cart/updateCart', [CartController::class, 'update']);
         Route::post('cart/remove', [CartController::class, 'removeFromCart']);
         Route::get('cart', [CartController::class, 'viewCart']);
-        Route::get('cart/getTotal', [CartController::class, 'getTotal']);
+
     
     });
 
@@ -36,3 +37,7 @@ Route::group(['middleware'=>'api'], function(){
 
 Route::apiResource('product',ProductController::class);
 Route::get('search', [ProductController::class, 'search']);
+
+Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories/{category}', [CategoryController::class, 'show']);
+Route::get('getCategories', [CategoryController::class, 'getCategories']);
