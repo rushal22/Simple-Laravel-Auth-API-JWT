@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductRequest;
-use App\Http\Requests\UpdateRequest;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateRequest;
+use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -35,6 +36,12 @@ class ProductController extends Controller
     {
         try{
             
+            $category = Category::where('name', $request->input('category_name'))->first();
+
+            if (!$category) {
+                return response()->json(['error' => 'Category not found'], 404);
+            }
+
             $products = new Product();
             $products->title = $request->title;
             $products->price = $request->price;
@@ -43,7 +50,7 @@ class ProductController extends Controller
             $products->rating = $request->rating;
             $products->quantity = $request->quantity;
             $products->brand = $request->brand;
-            $products->category = $request->category;
+            $products->category_id = $category->id;
             if($request->hasFile('image')){
                 
                 $imagepath = $request->file('image')->store('public');
