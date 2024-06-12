@@ -89,29 +89,22 @@ class CartController extends Controller
         $user = $request->user();
         $cart = $user->cart;
 
-        return response()->json(['cart' => $cart ? $cart->load('products') : null], 200);
-    }
-
-    public function getTotal(Request $request)
-    {
-        $user = $request->user();
-        $cart = $user->cart; // Assuming there's a one-to-one relationship between User and Cart
-
         if (!$cart) {
             return response()->json(['message' => 'Cart not found!'], 404);
         }
-
-        // Debugging: Check if the cart and products are being accessed correctly
+            
+            // Debugging: Check if the cart and products are being accessed correctly
         if ($cart->products->isEmpty()) {
             return response()->json(['message' => 'No products found in cart!'], 404);
         }
-
+                
         $totalPrice = 0;
-
+                
         foreach ($cart->products as $product) {
             $totalPrice += $product->price * $product->pivot->quantity;
         }
 
-        return response()->json(['total_price' => $totalPrice], 200);
+        return response()->json(['cart' => $cart ? $cart->load('products') : null, 'subtotal' => $totalPrice], 200);
     }
+
 }
