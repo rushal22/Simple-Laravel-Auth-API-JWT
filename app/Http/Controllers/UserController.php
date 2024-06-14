@@ -162,7 +162,8 @@ class UserController extends Controller
     public function editprofile(Request $request){
         $data = $request->all();
         $validator = Validator::make($request->all(), [
-            'name'=>'sometimes|required|max:30',
+            'firstName'=>'sometimes|required|max:30',
+            'lastName'=>'sometimes|required|max:30',
             'profile_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'contact' => 'sometimes|required|digits_between:10,15',
             'city' => 'sometimes|required|max:255',
@@ -175,8 +176,11 @@ class UserController extends Controller
 
         try{
             $user = $request->user();
-            if(isset($data['name'])){
-                $user->name = $data['name'];
+            if(isset($data['firstName'])){
+                $user->firstName = $data['firstName'];
+            }
+            if(isset($data['lastName'])){
+                $user->lastName = $data['lastName'];
             }
             $user->save();
 
