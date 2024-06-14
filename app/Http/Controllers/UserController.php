@@ -4,15 +4,16 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\UserDetail;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use App\Mail\ResetPasswordMail;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -161,27 +162,48 @@ class UserController extends Controller
     public function editprofile(Request $request){
         $data = $request->all();
         $validator = Validator::make($request->all(), [
-            'firstName'=>'sometimes|max:20',
-            'lastName'=>'sometimes|max:20'
+            'name'=>'sometimes|required|max:30',
+            'profile_image' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'contact' => 'sometimes|required|digits_between:10,15',
+            'city' => 'sometimes|required|max:255',
+            'address' => 'sometimes|required|max:255',
         ]);
 
         if($validator->fails()){
-            return response()->json(['message'=>$validator->errors()], 400);
+            return response()->json(['message'=>'error occured', 'error'=>$validator->errors()], 400);
         }
 
         try{
             $user = $request->user();
-            if(isset($data['firstName'])){
-                $user->firstName = $data['firstName'];
-            }
-            if(isset($data['lastName'])){
-                $user->lastName = $data['lastName'];
+            if(isset($data['name'])){
+                $user->name = $data['name'];
             }
             $user->save();
+
+            $userDetail = $user->userDetail ?? new UserDetail(['user_id' => $user->id]);
+
+            if ($request->has('contact')) {
+                $userDetail->contact = $data['contact'];
+            }
+            if ($request->has('city')) {
+                $userDetail->city = $data['city'];
+            }
+            if ($request->has('address')) {
+                $userDetail->address = $data['address'];
+            }
+            if($request->hasFile('profile_image')){
+
+                $imagepath = $request->file('profile_image')->store('users', 'public');
+
+                $imageURL = Storage::url($imagepath);
+                $userDetail->profile_image = $imageURL;
+            }
+
+            $userDetail->save();
+            $user->load('userDetail');
             return response()->json(['message'=>'Profile updated!', 'data'=>auth()->user()], 200);
         }catch(\Exception $e){
             return response()->json(['message'=>$e->getMessage()], 401);
         }
-
     }
 }
