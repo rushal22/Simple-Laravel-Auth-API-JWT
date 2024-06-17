@@ -36,7 +36,7 @@ class ProductController extends Controller
     {
         try{
             
-            $category = Category::where('name', $request->input('category_name'))->first();
+            $category = Category::where('id', $request->input('category_id'))->first();
 
             if (!$category) {
                 return response()->json(['error' => 'Category not found'], 404);
