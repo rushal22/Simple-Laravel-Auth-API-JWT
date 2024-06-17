@@ -58,6 +58,8 @@ class UserController extends Controller
         else{
             if(JWTAuth::attempt($data)){
                 $token = JWTAuth::attempt($data);
+                $user = $request->user();
+                $user->load('userDetail');
                 return response()->json(['message'=>'Login Successfull', 'access_token'=>$token, 'token_type'=>'Bearer', 'user_data'=>auth()->user()],200);
             }
             else{
