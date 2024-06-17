@@ -133,7 +133,9 @@ class ProductController extends Controller
         $keyword = $request->keyword;
 
         $products = Product::where('title', 'LIKE', '%' . $keyword . '%')
-                            // ->orWhere('category', 'LIKE', '%' . $keyword . '%')
+                            ->orWhereHas('category', function($query) use ($keyword) {
+                                $query->where('name', 'LIKE', '%' . $keyword . '%');
+                            })
                             ->get();
         if($products->isNotEmpty()){
             return response()->json(['products'=>$products], 200);
