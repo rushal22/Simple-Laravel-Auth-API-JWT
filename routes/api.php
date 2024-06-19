@@ -36,6 +36,7 @@ Route::group(['middleware'=>'api'], function(){
 });
 
 Route::apiResource('product',ProductController::class);
+Route::get('admin/products',[ProductController::class, 'adminindex']);
 Route::get('search', [ProductController::class, 'search']);
 
 Route::get('categories', [CategoryController::class, 'index']);

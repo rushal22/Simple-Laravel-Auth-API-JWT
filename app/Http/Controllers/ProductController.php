@@ -144,4 +144,10 @@ class ProductController extends Controller
             return response()->json(['message'=>'Nothing Found!!!'], 404);
         }
     }
+
+    public function adminindex()
+    {
+        $products = Product::orderBy('created_at', 'DESC')->with(['category'])->paginate(5);
+        return response()->json(['data'=>$products], 200);
+    }
 }
