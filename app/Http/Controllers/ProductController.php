@@ -94,10 +94,13 @@ class ProductController extends Controller
     {
         try{
             $product = Product::findorFail($id);
+            $product->title = $request->title;
             $product->price = $request->price;
+            $product->description = $request->description;
             $product->discountpercentage = $request->discountpercentage;
             $product->rating = $request->rating;
             $product->quantity = $request->quantity;
+            $product->brand = $request->brand;
             $product->save();
 
                 return response()->json(['message'=>'Product updated successfully!'], 201);
