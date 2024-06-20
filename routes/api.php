@@ -5,6 +5,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ManagementController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -42,3 +43,6 @@ Route::get('search', [ProductController::class, 'search']);
 Route::get('categories', [CategoryController::class, 'index']);
 Route::get('categories/{category}', [CategoryController::class, 'show']);
 Route::get('getCategories', [CategoryController::class, 'getCategories']);
+
+Route::get('users',[ManagementController::class, 'index']);
+Route::put('users/{id}',[ManagementController::class, 'update']);
