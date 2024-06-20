@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
@@ -105,6 +106,20 @@ class CartController extends Controller
         }
 
         return response()->json(['cart' => $cart ? $cart->load('products') : null, 'subtotal' => $totalPrice], 200);
+    }
+
+    public function getItemCount(Request $request)
+    {
+        $user = Auth::user();
+        $cart = Cart::where('user_id', $user->id)->first();
+
+        if ($cart) {
+            $itemCount = $cart->products()->sum('cart_product.quantity');
+        } else {
+            $itemCount = 0;
+        }
+
+        return response()->json(['item_count' => $itemCount]);
     }
 
 }

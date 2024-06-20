@@ -30,7 +30,7 @@ Route::group(['middleware'=>'api'], function(){
         Route::put('cart/updateCart', [CartController::class, 'update']);
         Route::post('cart/remove', [CartController::class, 'removeFromCart']);
         Route::get('cart', [CartController::class, 'viewCart']);
-
+        Route::get('/cart/item-count', [CartController::class, 'getItemCount']);
     
     });
 
