@@ -38,4 +38,19 @@ class ManagementController extends Controller
             return response()->json(['message' => 'Error occurred!', 'errors' => $e->getMessage()], 400);
         }
     }
+
+    public function usersearch(Request $request)
+    {
+        $keyword = $request->keyword;
+
+        $user = User::where('email', 'LIKE', '%' . $keyword . '%')
+                            ->orWhere('name', 'LIKE', '%' . $keyword . '%')
+                            ->get();
+        if($user->isNotEmpty()){
+            return response()->json(['users'=>$user], 200);
+        }
+        else{
+            return response()->json(['message'=>'User not Found!!!'], 404);
+        }
+    }
 }

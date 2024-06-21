@@ -46,3 +46,4 @@ Route::get('getCategories', [CategoryController::class, 'getCategories']);
 
 Route::get('users',[ManagementController::class, 'index']);
 Route::put('users/{id}',[ManagementController::class, 'update']);
+Route::get('users/search',[ManagementController::class, 'usersearch']);
