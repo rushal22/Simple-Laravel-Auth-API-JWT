@@ -18,9 +18,6 @@ class ManagementController extends Controller
     public function update(Request $request, string $id)
     {
         $validatedData = Validator::make($request->all(),[
-            'firstName'=>'required',
-            'lastName'=>'required',
-            'email'=>'required',
             'role' => 'required|in:admin,user',
         ]);
         if($validatedData->fails())
