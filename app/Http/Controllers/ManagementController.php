@@ -44,8 +44,9 @@ class ManagementController extends Controller
         $keyword = $request->keyword;
 
         $user = User::where('email', 'LIKE', '%' . $keyword . '%')
-                            ->orWhere('name', 'LIKE', '%' . $keyword . '%')
-                            ->get();
+                    ->orWhere('firstName', 'LIKE', '%' . $keyword . '%')
+                    ->orWhere('lastName', 'LIKE', '%' . $keyword . '%')
+                    ->get();
         if($user->isNotEmpty()){
             return response()->json(['users'=>$user], 200);
         }
