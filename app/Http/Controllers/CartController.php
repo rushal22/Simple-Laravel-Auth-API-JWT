@@ -114,7 +114,7 @@ class CartController extends Controller
         $cart = Cart::where('user_id', $user->id)->first();
 
         if ($cart) {
-            $itemCount = $cart->products()->sum('cart_product.quantity');
+            $itemCount = $cart->products()->count();
         } else {
             $itemCount = 0;
         }
