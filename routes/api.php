@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ManagementController;
@@ -31,6 +32,13 @@ Route::group(['middleware'=>'api'], function(){
         Route::post('cart/remove', [CartController::class, 'removeFromCart']);
         Route::get('cart', [CartController::class, 'viewCart']);
         Route::get('/cart/item-count', [CartController::class, 'getItemCount']);
+
+        Route::post('/order', [OrderController::class, 'placeOrder']);
+        Route::get('/orders', [OrderController::class, 'viewOrders']);
+        Route::get('/order/{id}', [OrderController::class, 'viewOrder']);
+        Route::put('/order/{id}', [OrderController::class, 'updateOrderStatus']);
+        Route::post('/order/{id}/cancel', [OrderController::class, 'cancelOrder']);
+        Route::get('admin/orders', [OrderController::class, 'allOrders']);
     
     });
 
