@@ -11,7 +11,7 @@ class ManagementController extends Controller
 {
     public function index()
     {
-        $users = User::select('id', 'firstName', 'lastName', 'email', 'role')->get();
+        $users = User::select('id', 'firstName', 'lastName', 'email', 'role')->paginate(10);
         return response()->json(['data'=>$users]);
     }
 
