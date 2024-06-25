@@ -99,13 +99,17 @@ class CartController extends Controller
             return response()->json(['message' => 'No products found in cart!'], 404);
         }
                 
-        $totalPrice = 0;
+        $subtotal = 0;
                 
         foreach ($cart->products as $product) {
-            $totalPrice += $product->price * $product->pivot->quantity;
+            $subtotal += $product->price * $product->pivot->quantity;
         }
 
-        return response()->json(['cart' => $cart ? $cart->load('products') : null, 'subtotal' => $totalPrice], 200);
+        $deliverycharge = 100;
+
+        $total = $subtotal + $deliverycharge;
+
+        return response()->json(['cart' => $cart ? $cart->load('products') : null, 'subtotal' => $subtotal, 'deliverycharge'=>$deliverycharge, 'total'=>$total], 200);
     }
 
     public function getItemCount(Request $request)
