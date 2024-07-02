@@ -102,7 +102,10 @@ class CartController extends Controller
         $subtotal = 0;
                 
         foreach ($cart->products as $product) {
-            $subtotal += $product->price * $product->pivot->quantity;
+            $discountedPrice = $product->discountpercentage > 0
+            ? $product->price - ($product->price * ($product->discountpercentage / 100))
+            : $product->price;
+            $subtotal += $discountedPrice * $product->pivot->quantity;
         }
 
         $deliverycharge = 100;
