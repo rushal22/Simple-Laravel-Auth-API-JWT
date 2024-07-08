@@ -31,7 +31,10 @@ class OrderController extends Controller
         $totalPrice = 0;
 
         foreach ($cart->products as $product) {
-            $totalPrice += $product->price * $product->pivot->quantity;
+            $discountedPrice = $product->discountpercentage > 0
+                ? $product->price - ($product->price * ($product->discountpercentage / 100))
+                : $product->price;
+            $totalPrice += $discountedPrice * $product->pivot->quantity;
         }
 
         try {
@@ -43,9 +46,12 @@ class OrderController extends Controller
             ]);
             
             foreach ($cart->products as $product) {
+                $discountedPrice = $product->discountpercentage > 0
+                    ? $product->price - ($product->price * ($product->discountpercentage / 100))
+                    : $product->price;
                 $order->products()->attach($product->id, [
                     'quantity' => $product->pivot->quantity,
-                    'price' => $product->price,
+                    'price' => $discountedPrice,
                 ]);
             }
         
@@ -65,6 +71,14 @@ class OrderController extends Controller
 
         $orders = $user->orders()->with('products')->get();
 
+        $orders->each(function ($order) {
+            $order->products->each(function ($product) {
+                $product->discounted_price = $product->discountpercentage > 0
+                    ? $product->price - ($product->price * ($product->discountpercentage / 100))
+                    : $product->price;
+            });
+        });
+
         return response()->json(['orders' => $orders], 200);
     }
 
@@ -75,6 +89,12 @@ class OrderController extends Controller
         if (!$order) {
             return response()->json(['message' => 'Order not found'], 404);
         }
+
+        $order->products->each(function ($product) {
+            $product->discounted_price = $product->discountpercentage > 0
+                ? $product->price - ($product->price * ($product->discountpercentage / 100))
+                : $product->price;
+        });
 
         return response()->json(['order' => $order], 200);
     }
@@ -111,6 +131,14 @@ class OrderController extends Controller
     public function allOrders()
     {
         $orders = Order::with('user', 'products')->get();
+
+        $orders->each(function ($order) {
+            $order->products->each(function ($product) {
+                $product->discounted_price = $product->discountpercentage > 0
+                    ? $product->price - ($product->price * ($product->discountpercentage / 100))
+                    : $product->price;
+            });
+        });
 
         return response()->json(['orders' => $orders], 200);
     }
